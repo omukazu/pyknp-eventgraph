@@ -114,6 +114,21 @@ class Argument(Component):
             self._head_reps = self._head_reps or self.normalized_reps
         return self._head_reps
 
+    def get_head_reps(self, bp) -> str:
+        """A head representative string."""
+        _head_reps = None
+        if bp.tag:  # Not an exophora.
+            head_reps = bp.tag.head_prime_repname or bp.tag.head_repname
+            if head_reps:
+                _head_reps = f"[{head_reps}]" if bp.omitted_case else head_reps
+
+        _normalized_reps = self._base_phrase_to_text(
+            bp, mode="reps", truncate=True, include_modifiees=True
+        )
+
+        _head_reps = _head_reps or _normalized_reps
+        return _head_reps
+
     @property
     def adnominal_events(self) -> List["Event"]:
         """A list of events modifying this predicate as an adnominal."""
@@ -154,6 +169,7 @@ class Argument(Component):
                         "normalized_mrphs": self._base_phrase_to_text(bp, mode="mrphs", truncate=True),
                         "reps": self._base_phrase_to_text(bp, mode="reps", truncate=False),
                         "normalized_reps": self._base_phrase_to_text(bp, mode="reps", truncate=True),
+                        "head_reps": self.get_head_reps(bp),
                         "adnominal_event_ids": [e.evid for e in bp.adnominal_events],
                         "sentential_complement_event_ids": [e.evid for e in bp.sentential_complement_events],
                         "modifier": "修飾" in bp.tag.features,

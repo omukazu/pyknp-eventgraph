@@ -284,6 +284,7 @@ class BasePhraseBuilder(Builder):
 
         for head in head_bps:
             # TODO: fundamental fix
-            if head.tag and ('<ID:〜に比べて>' in head.tag.fstring or '<ID:〜によって>' in head.tag.fstring):
+            tags = ['<ID:〜によって>', '<ID:〜に対して>', '<ID:〜に関して>', '<ID:〜において>', '<ID:〜に比べて>', '<ID:〜に合わせて>']
+            if head.tag and any(tag in head.tag.fstring for tag in tags):
                 continue
             resolver(head.children)

@@ -363,6 +363,7 @@ class Event(Component):
         exclude_omission: bool = False,
         exclude_exophora: bool = False,
         include_modifiers: bool = False,
+        bps: List[BasePhrase] = None
     ) -> str:
         """Convert this event to a text.
 
@@ -376,7 +377,8 @@ class Event(Component):
         """
         assert mode in {"mrphs", "reps"}
 
-        bps = self.get_constituent_base_phrases(exclude_omission, exclude_exophora)
+        if bps is None:
+            bps = self.get_constituent_base_phrases(exclude_omission, exclude_exophora)
         bucket = collections.defaultdict(list)
         for bp in sorted(bps):
             bucket[bp.key[:-1]].append(bp)  # bp.key[-1] is the tag id.

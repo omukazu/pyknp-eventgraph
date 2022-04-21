@@ -78,7 +78,7 @@ class FeaturesBuilder(Builder):
             event=event,
             modality=cls._find_modality(event.head, func_tag),
             tense=cls._find_tense(func_tag),
-            negation=cls._find_negation(func_tag),
+            negation=cls._find_negation(event.head, func_tag),
             state=cls._find_state(func_tag),
             complement=cls._find_complement(func_tag),
             level=cls._find_level(func_tag),
@@ -112,8 +112,14 @@ class FeaturesBuilder(Builder):
         return "unknown"
 
     @classmethod
-    def _find_negation(cls, func_tag: Tag) -> bool:
-        return func_tag.features.get("否定表現", False)
+    def _find_negation(cls, head: Tag, func_tag: Tag) -> bool:
+        if head.fstring == func_tag.fstring:
+            negation = func_tag.features.get("否定表現", False)
+        else:
+            head_negation = head.features.get("否定表現", False)
+            func_negation = func_tag.features.get("否定表現", False)
+            negation = head_negation ^ func_negation
+        return negation
 
     @classmethod
     def _find_state(cls, head: Tag) -> str:
